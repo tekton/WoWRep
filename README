@@ -1,0 +1,6 @@
+...what's that? You wanted documentation?!
+
+Ok, it's written in Python using Django and South; access the WoW API and compiles data from there.
+
+
+That's all for now...
