@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.http import Http404
 from django.template import RequestContext
-from api import *
+from api.models import *
 # Create your views here.
 
 def get_data(request,c_realm,c_name):
@@ -20,8 +20,10 @@ def get_data(request,c_realm,c_name):
 
 	json_result = json.loads(result)
 	
+	'''
 	for x in json_result:
 		print x
+	'''
 	
 	level = json_result["level"]
 	player_class = json_result["class"]
@@ -29,8 +31,10 @@ def get_data(request,c_realm,c_name):
 	
 	try:
 		user_char = character.objects.get(name=c_name,realm=c_realm)
-	except DoesNotExit:
+	except character.DoesNotExist:
 		user_char = character()
+		user_char.name = c_name
+		user_char.realm = c_realm
 	
 	user_char.player_class = player_class
 	user_char.player_level = level
@@ -48,16 +52,16 @@ def get_data(request,c_realm,c_name):
 		### character, standing, max_for_rank, rep_id, rank_value, name
 		
 		try:
-			rep = character_reputation.object.get(character=user_char,rep_id=k["id"])
-		except DoesNotExist:
+			rep = character_reputation.objects.get(character=user_char,rep_id=k["id"])
+		except character_reputation.DoesNotExist:
 			rep = character_reputation()
 			rep.character=user_char
 			rep.rep_id = k["id"]
-			rep.name = k["value"]
-		
+			
+		rep.name = k["name"]
 		rep.standing = k["standing"]
-		rep.max = k["max"]
-		rep.value = k["value"]
+		rep.max_for_rank = k["max"]
+		rep.rank_value = k["value"]
 		
 		try:
 			rep.save()
